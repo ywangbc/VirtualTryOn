@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { Garment } from "@/domain/garment";
 import type { Look } from "@/look/look";
+import type { Shop } from "@/domain/shop";
 import {
   activateIndex,
   closeProduct,
@@ -16,10 +17,11 @@ import { ProductSheet } from "./ProductSheet";
 
 type FeedProps = {
   garments: readonly Garment[];
+  shops: readonly Shop[];
   look: Look | null;
 };
 
-export function Feed({ garments, look }: FeedProps) {
+export function Feed({ garments, shops, look }: FeedProps) {
   const [state, setState] = useState(() => createFeedState(garments.length));
   const scrollerRef = useRef<HTMLDivElement>(null);
 
@@ -56,6 +58,12 @@ export function Feed({ garments, look }: FeedProps) {
   }, [garments]);
 
   const open = selectedGarment(garments, state);
+  const openShop = open
+    ? shops.find((shop) => shop.id === open.shopId)
+    : undefined;
+  if (open && !openShop) {
+    throw new Error(`Unknown shop: ${open.shopId}`);
+  }
 
   if (garments.length === 0) {
     return (
@@ -84,9 +92,10 @@ export function Feed({ garments, look }: FeedProps) {
           />
         ))}
       </div>
-      {open ? (
+      {open && openShop ? (
         <ProductSheet
           garment={open}
+          shop={openShop}
           onClose={() => setState((current) => closeProduct(current))}
         />
       ) : null}

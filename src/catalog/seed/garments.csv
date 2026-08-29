@@ -1,0 +1,25 @@
+shop_id,sku,brand,name,price_cents,currency,sizes,description,product_image_url,video_url,poster_url
+atlas,ATL-COAT-01,Atlas Studio,Boxy Wool Overcoat,24800,USD,S|M|L|XL,A structured wool overcoat with a clean shoulder and a long easy line.,/clips/atlas-overcoat.jpg,/clips/atlas-overcoat.mp4,/clips/atlas-overcoat.jpg
+atlas,ATL-BLZ-02,Atlas Studio,Single-Button Blazer,19800,USD,S|M|L,A sharp blazer with a soft shoulder and a cropped body.,/clips/northline-jacket.jpg,/clips/northline-jacket.mp4,/clips/northline-jacket.jpg
+atlas,ATL-KNT-03,Atlas Studio,Fine Merino Turtleneck,14200,USD,XS|S|M|L,A close merino turtleneck that layers cleanly under coats.,/clips/lumen-knit.jpg,/clips/lumen-knit.mp4,/clips/lumen-knit.jpg
+atlas,ATL-TRS-04,Atlas Studio,Tapered Wool Trouser,17600,USD,28|30|32|34,Tailored wool trousers with a slight taper and a plain front.,/clips/harbor-trouser.jpg,/clips/harbor-trouser.mp4,/clips/harbor-trouser.jpg
+atlas,ATL-DRS-05,Atlas Studio,Column Midi Dress,22000,USD,XS|S|M|L,A column dress with a high neck and a quiet drape.,/clips/solace-dress.jpg,/clips/solace-dress.mp4,/clips/solace-dress.jpg
+atlas,ATL-SHT-06,Atlas Studio,Oxford Shirt,8800,USD,S|M|L|XL,A washed oxford shirt with a relaxed body.,/clips/ridge-shirt.jpg,/clips/ridge-shirt.mp4,/clips/ridge-shirt.jpg
+atlas,ATL-CRD-07,Atlas Studio,Rib Cardigan,16400,USD,S|M|L,A ribbed cardigan meant to be worn open.,/clips/ember-cardigan.jpg,/clips/ember-cardigan.mp4,/clips/ember-cardigan.jpg
+atlas,ATL-TEE-08,Atlas Studio,Heavyweight Tee,5800,USD,S|M|L|XL,A heavy cotton tee with a short boxy hem.,/clips/volt-tee.jpg,/clips/volt-tee.mp4,/clips/volt-tee.jpg
+northline,NTH-JKT-01,Northline,Washed Indigo Jacket,18900,USD,S|M|L|XL,Broken-in indigo cotton with a cropped workwear cut.,/clips/northline-jacket.jpg,/clips/northline-jacket.mp4,/clips/northline-jacket.jpg
+northline,NTH-CHG-02,Northline,Canvas Chore Coat,17200,USD,S|M|L,A canvas chore coat with patch pockets.,/clips/atlas-overcoat.jpg,/clips/atlas-overcoat.mp4,/clips/atlas-overcoat.jpg
+northline,NTH-SWT-03,Northline,Fleece Crew,9600,USD,S|M|L|XL,A brushed fleece crew for everyday wear.,/clips/lumen-knit.jpg,/clips/lumen-knit.mp4,/clips/lumen-knit.jpg
+northline,NTH-PNT-04,Northline,Work Pant,12800,USD,28|30|32|34|36,A straight work pant with a clean pocket set.,/clips/harbor-trouser.jpg,/clips/harbor-trouser.mp4,/clips/harbor-trouser.jpg
+northline,NTH-DRS-05,Northline,Utility Shirt Dress,15400,USD,XS|S|M|L,A shirt dress with a belt and a mid calf hem.,/clips/solace-dress.jpg,/clips/solace-dress.mp4,/clips/solace-dress.jpg
+northline,NTH-SHT-06,Northline,Chambray Shirt,9200,USD,S|M|L|XL,A light chambray shirt with a soft collar.,/clips/ridge-shirt.jpg,/clips/ridge-shirt.mp4,/clips/ridge-shirt.jpg
+northline,NTH-HOD-07,Northline,Zip Hoodie,11800,USD,S|M|L|XL,A midweight zip hoodie with a short rib hem.,/clips/ember-cardigan.jpg,/clips/ember-cardigan.mp4,/clips/ember-cardigan.jpg
+northline,NTH-TEE-08,Northline,Pocket Tee,4900,USD,S|M|L|XL,A cotton pocket tee with a set-in sleeve.,/clips/volt-tee.jpg,/clips/volt-tee.mp4,/clips/volt-tee.jpg
+harbor,HBR-TRS-01,Harbor & Co,Pleated Wide Trouser,16400,USD,28|30|32|34,Soft pleated trousers with a full leg and a tailored waist.,/clips/harbor-trouser.jpg,/clips/harbor-trouser.mp4,/clips/harbor-trouser.jpg
+harbor,HBR-COT-02,Harbor & Co,Double-Face Coat,26800,USD,S|M|L,A double-face coat with a hidden placket.,/clips/atlas-overcoat.jpg,/clips/atlas-overcoat.mp4,/clips/atlas-overcoat.jpg
+harbor,HBR-KNT-03,Harbor & Co,Silk-Cotton Knit,13800,USD,XS|S|M|L,A fine knit with a little silk in the blend.,/clips/lumen-knit.jpg,/clips/lumen-knit.mp4,/clips/lumen-knit.jpg
+harbor,HBR-JKT-04,Harbor & Co,Linen Blouson,18200,USD,S|M|L,A linen blouson with a drawcord hem.,/clips/northline-jacket.jpg,/clips/northline-jacket.mp4,/clips/northline-jacket.jpg
+harbor,HBR-DRS-05,Harbor & Co,Silk Slip Dress,21000,USD,XS|S|M,Bias-cut slip with a quiet drape and a square neckline.,/clips/solace-dress.jpg,/clips/solace-dress.mp4,/clips/solace-dress.jpg
+harbor,HBR-SHT-06,Harbor & Co,Poplin Shirt,9800,USD,S|M|L|XL,Crisp poplin shirt with a relaxed body and a precise collar.,/clips/ridge-shirt.jpg,/clips/ridge-shirt.mp4,/clips/ridge-shirt.jpg
+harbor,HBR-CRD-07,Harbor & Co,Cashmere Cardigan,27600,USD,S|M|L,Lightweight cashmere cardigan meant to be worn open over everything.,/clips/ember-cardigan.jpg,/clips/ember-cardigan.mp4,/clips/ember-cardigan.jpg
+harbor,HBR-TEE-08,Harbor & Co,Heavyweight Tee,6400,USD,S|M|L|XL,Heavy cotton tee with a set-in sleeve and a short boxy hem.,/clips/volt-tee.jpg,/clips/volt-tee.mp4,/clips/volt-tee.jpg
