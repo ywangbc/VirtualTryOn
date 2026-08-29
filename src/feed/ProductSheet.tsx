@@ -1,5 +1,6 @@
 import { formatMoney } from "@/domain/money";
 import type { Garment } from "@/domain/garment";
+import { pressableClassName } from "@/ui/pressable";
 
 type ProductSheetProps = {
   garment: Garment;
@@ -27,7 +28,7 @@ export function ProductSheet({ garment, onClose }: ProductSheetProps) {
           </p>
           <button
             type="button"
-            className="rounded-full bg-white px-4 py-2 text-sm font-medium text-black"
+            className={`${pressableClassName} px-4 py-2`}
             onClick={onClose}
           >
             Close

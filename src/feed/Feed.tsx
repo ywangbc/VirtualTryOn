@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { Garment } from "@/domain/garment";
+import type { Look } from "@/look/look";
 import {
   activateIndex,
   closeProduct,
@@ -9,14 +10,16 @@ import {
   selectedGarment,
   toggleProduct,
 } from "./feed-session";
+import { feedMedia } from "./feed-media";
 import { FeedItem } from "./FeedItem";
 import { ProductSheet } from "./ProductSheet";
 
 type FeedProps = {
   garments: readonly Garment[];
+  look: Look | null;
 };
 
-export function Feed({ garments }: FeedProps) {
+export function Feed({ garments, look }: FeedProps) {
   const [state, setState] = useState(() => createFeedState(garments.length));
   const scrollerRef = useRef<HTMLDivElement>(null);
 
@@ -72,6 +75,7 @@ export function Feed({ garments }: FeedProps) {
           <FeedItem
             key={garment.id}
             garment={garment}
+            media={feedMedia(look, garment)}
             index={index}
             playing={state.activeIndex === index}
             onSelect={() =>
