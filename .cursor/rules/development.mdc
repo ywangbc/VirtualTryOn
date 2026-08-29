@@ -1,0 +1,7 @@
+---
+alwaysApply: true
+---
+
+Follow `docs/ai-development-rules.md` for every change in this repository. That file is the single source of truth for engineering principles, TDD, documentation, and commits.
+
+Do not create a second copy of those rules. If they conflict with a convenience shortcut, follow `docs/ai-development-rules.md`.
