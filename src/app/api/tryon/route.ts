@@ -7,7 +7,7 @@ import { lookStore } from "@/look/server-store";
 import { createFalProvider } from "@/tryon/fal-provider";
 import { loadImage } from "@/tryon/load-image";
 import { beginTryOn, runTryOn } from "@/tryon/run-tryon";
-import { tryOnStore } from "@/tryon/server";
+import { tryOnStills, tryOnStore } from "@/tryon/server";
 
 export const maxDuration = 120;
 
@@ -56,20 +56,31 @@ export async function POST(request: Request) {
   if (!garment) {
     return NextResponse.json({ error: "Unknown garment" }, { status: 404 });
   }
-  const { job, started } = await beginTryOn(tryOnStore, lookId, garmentId);
+  const person = await lookStore.getPhoto(lookId);
+  if (!person) {
+    return NextResponse.json({ error: "Look photo is missing" }, { status: 404 });
+  }
+  let garmentImage;
+  try {
+    garmentImage = await loadImage(garment.productImageUrl, {
+      publicRoot: path.join(process.cwd(), "public"),
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Invalid garment image";
+    return NextResponse.json({ error: message }, { status: 400 });
+  }
+  const { job, started } = await beginTryOn(
+    { store: tryOnStore, stills: tryOnStills, person, garmentImage },
+    lookId,
+    garmentId,
+  );
   if (started) {
     after(async () => {
       try {
-        const person = await lookStore.getPhoto(lookId);
-        if (!person) {
-          throw new Error("Look photo is missing");
-        }
-        const garmentImage = await loadImage(garment.productImageUrl, {
-          publicRoot: path.join(process.cwd(), "public"),
-        });
         await runTryOn(
           {
             store: tryOnStore,
+            stills: tryOnStills,
             provider: createFalProvider(process.env.FAL_KEY),
             person,
             garmentImage,

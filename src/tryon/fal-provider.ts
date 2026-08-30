@@ -18,6 +18,20 @@ function fileName(kind: string, mimeType: string): string {
   return `${kind}.jpg`;
 }
 
+export function falErrorMessage(error: unknown): string {
+  const status =
+    typeof error === "object" && error !== null && "status" in error
+      ? Number((error as { status: unknown }).status)
+      : undefined;
+  if (status === 403) {
+    return "Fal account is locked. Add credits at fal.ai, then retry.";
+  }
+  if (status === 401) {
+    return "FAL_KEY was rejected";
+  }
+  return error instanceof Error ? error.message : "Try-on failed";
+}
+
 export function createFalProvider(credentials: string | undefined): TryOnProvider {
   if (!credentials) {
     return {
@@ -29,33 +43,37 @@ export function createFalProvider(credentials: string | undefined): TryOnProvide
 
   return {
     async generate(input) {
-      fal.config({ credentials });
-      const human_image_url = await fal.storage.upload(
-        toFile(input.person, fileName("person", input.person.mimeType)),
-      );
-      const garment_image_url = await fal.storage.upload(
-        toFile(input.garment, fileName("garment", input.garment.mimeType)),
-      );
-      const result = await fal.subscribe(FAL_TRYON_MODEL, {
-        input: {
-          human_image_url,
-          garment_image_url,
-        },
-      });
-      const image = (result.data as { image?: { url?: string; content_type?: string } })
-        .image;
-      if (!image?.url) {
-        throw new Error("Try-on returned no image");
+      try {
+        fal.config({ credentials });
+        const human_image_url = await fal.storage.upload(
+          toFile(input.person, fileName("person", input.person.mimeType)),
+        );
+        const garment_image_url = await fal.storage.upload(
+          toFile(input.garment, fileName("garment", input.garment.mimeType)),
+        );
+        const result = await fal.subscribe(FAL_TRYON_MODEL, {
+          input: {
+            human_image_url,
+            garment_image_url,
+          },
+        });
+        const image = (result.data as { image?: { url?: string; content_type?: string } })
+          .image;
+        if (!image?.url) {
+          throw new Error("Try-on returned no image");
+        }
+        const response = await fetch(image.url);
+        if (!response.ok) {
+          throw new Error("Could not download try-on image");
+        }
+        return {
+          mimeType:
+            image.content_type ?? response.headers.get("content-type") ?? "image/png",
+          bytes: new Uint8Array(await response.arrayBuffer()),
+        };
+      } catch (error) {
+        throw new Error(falErrorMessage(error));
       }
-      const response = await fetch(image.url);
-      if (!response.ok) {
-        throw new Error("Could not download try-on image");
-      }
-      return {
-        mimeType:
-          image.content_type ?? response.headers.get("content-type") ?? "image/png",
-        bytes: new Uint8Array(await response.arrayBuffer()),
-      };
     },
   };
 }

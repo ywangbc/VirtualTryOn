@@ -14,6 +14,6 @@ Index of project documentation. Implementation details live in code; these pages
 - Feed UI: `src/feed/Feed.tsx`
 - Feed media choice: `src/feed/feed-media.ts`
 - Look identity: `src/look/look.ts`, `src/look/look-store.ts`, `src/look/LookChrome.tsx`
-- Try-on: `src/tryon/run-tryon.ts`, `src/tryon/tryon-store.ts`, `src/tryon/fal-provider.ts`
+- Try-on: `src/tryon/run-tryon.ts`, `src/tryon/tryon-store.ts`, `src/tryon/still-cache.ts`, `src/tryon/fal-provider.ts`
 - App entry: `src/app/page.tsx`
 - Catalog import: `src/app/admin/page.tsx`
