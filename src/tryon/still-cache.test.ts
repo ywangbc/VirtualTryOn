@@ -17,12 +17,22 @@ const otherGarment = {
 };
 
 describe("tryOnPairHash", () => {
-  it("is stable for the same person and garment bytes", () => {
-    expect(tryOnPairHash(person, garment)).toBe(tryOnPairHash(person, garment));
+  it("is stable for the same person, garment id, and image", () => {
+    expect(tryOnPairHash(person, "g1", garment)).toBe(
+      tryOnPairHash(person, "g1", garment),
+    );
+  });
+
+  it("changes when the garment id changes even if the image is the same", () => {
+    expect(tryOnPairHash(person, "g1", garment)).not.toBe(
+      tryOnPairHash(person, "g2", garment),
+    );
   });
 
   it("changes when the garment image changes", () => {
-    expect(tryOnPairHash(person, garment)).not.toBe(tryOnPairHash(person, otherGarment));
+    expect(tryOnPairHash(person, "g1", garment)).not.toBe(
+      tryOnPairHash(person, "g1", otherGarment),
+    );
   });
 });
 
@@ -30,16 +40,18 @@ describe("createMemoryStillCache", () => {
   it("returns a stored still for the same pair", async () => {
     const stills = createMemoryStillCache();
     const still = { mimeType: "image/png", bytes: png1x1 };
-    await stills.put(tryOnPairHash(person, garment), still);
-    await expect(stills.get(tryOnPairHash(person, garment))).resolves.toEqual(still);
-    await expect(stills.get(tryOnPairHash(person, otherGarment))).resolves.toBeUndefined();
+    await stills.put(tryOnPairHash(person, "g1", garment), still);
+    await expect(stills.get(tryOnPairHash(person, "g1", garment))).resolves.toEqual(
+      still,
+    );
+    await expect(stills.get(tryOnPairHash(person, "g2", garment))).resolves.toBeUndefined();
   });
 
   it("runs produce once for concurrent remember calls", async () => {
     const stills = createMemoryStillCache();
     const still = { mimeType: "image/png", bytes: png1x1 };
     let calls = 0;
-    const hash = tryOnPairHash(person, garment);
+    const hash = tryOnPairHash(person, "g1", garment);
     const produce = async () => {
       calls += 1;
       await new Promise((resolve) => setTimeout(resolve, 20));
@@ -60,7 +72,7 @@ describe("createFsStillCache", () => {
     const root = await mkdtemp(path.join(os.tmpdir(), "vto-stills-"));
     try {
       const still = { mimeType: "image/png", bytes: png1x1 };
-      const hash = tryOnPairHash(person, garment);
+      const hash = tryOnPairHash(person, "g1", garment);
       await createFsStillCache(root).put(hash, still);
       await expect(createFsStillCache(root).get(hash)).resolves.toEqual(still);
     } finally {

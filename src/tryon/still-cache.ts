@@ -9,10 +9,16 @@ export type StillCache = {
   remember(pairHash: string, produce: () => Promise<LookBlob>): Promise<LookBlob>;
 };
 
-export function tryOnPairHash(person: LookBlob, garment: LookBlob): string {
+export function tryOnPairHash(
+  person: LookBlob,
+  garmentId: string,
+  garment: LookBlob,
+): string {
   const hash = createHash("sha256");
   hash.update(person.mimeType);
   hash.update(person.bytes);
+  hash.update(new Uint8Array([0]));
+  hash.update(garmentId);
   hash.update(new Uint8Array([0]));
   hash.update(garment.mimeType);
   hash.update(garment.bytes);

@@ -29,9 +29,9 @@ describe("runTryOn", () => {
     expect(generate).not.toHaveBeenCalled();
   });
 
-  it("reuses a cached still for the same person and garment images", async () => {
+  it("reuses a cached still for the same person and garment id", async () => {
     const stills = createMemoryStillCache();
-    await stills.put(tryOnPairHash(person, garment), still);
+    await stills.put(tryOnPairHash(person, "g1", garment), still);
     const generate = vi.fn();
     const store = createMemoryTryOnStore();
     const job = await runTryOn(
@@ -43,16 +43,44 @@ describe("runTryOn", () => {
         garmentImage: garment,
       },
       "look-2",
-      "g9",
+      "g1",
     );
     expect(job).toEqual({
       lookId: "look-2",
-      garmentId: "g9",
+      garmentId: "g1",
       status: "ready",
-      resultUrl: "/api/tryon/result?look=look-2&garment=g9",
+      resultUrl: "/api/tryon/result?look=look-2&garment=g1",
     });
     expect(generate).not.toHaveBeenCalled();
-    await expect(store.getResult("look-2", "g9")).resolves.toEqual(still);
+    await expect(store.getResult("look-2", "g1")).resolves.toEqual(still);
+  });
+
+  it("generates again for a different garment id with the same product image", async () => {
+    const stills = createMemoryStillCache();
+    const generate = vi.fn(async () => still);
+    await runTryOn(
+      {
+        store: createMemoryTryOnStore(),
+        stills,
+        provider: { generate },
+        person,
+        garmentImage: garment,
+      },
+      "look-1",
+      "g1",
+    );
+    await runTryOn(
+      {
+        store: createMemoryTryOnStore(),
+        stills,
+        provider: { generate },
+        person,
+        garmentImage: garment,
+      },
+      "look-1",
+      "g2",
+    );
+    expect(generate).toHaveBeenCalledTimes(2);
   });
 
   it("stores a generated still so a later pair skips the provider", async () => {
@@ -175,7 +203,7 @@ describe("beginTryOn", () => {
   it("returns a cached still without starting generate", async () => {
     const store = createMemoryTryOnStore();
     const stills = createMemoryStillCache();
-    await stills.put(tryOnPairHash(person, garment), still);
+    await stills.put(tryOnPairHash(person, "g1", garment), still);
     await expect(
       beginTryOn(
         { store, stills, person, garmentImage: garment },

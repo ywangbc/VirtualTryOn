@@ -6,7 +6,7 @@ Still try-on: the saved look photo plus a garment product image become a cached 
 
 - Person photo + garment `productImageUrl` → still, via Fal
 - Jobs: queued, ready, failed
-- Cache by person photo bytes and garment image bytes; Fal is skipped on a hit
+- Cache by person photo and garment id; Fal is skipped on a hit
 - Active feed item generates; swipe shows a ready still instantly
 
 ## Out of scope
@@ -21,7 +21,7 @@ A saved look on a catalog garment shows a try-on still when the job is ready, an
 
 Requires `FAL_KEY` in `.env.local`. Missing key fails the job; it does not fake a still.
 
-Stills are reused for the same person photo bytes and garment image bytes, including a new look or another SKU that uses the same product image. Fal is not called on a hit.
+Stills are reused for the same person photo and the same garment id. A different SKU generates even if it shares a product image file.
 
 Authoritative job flow: `src/tryon/run-tryon.ts`, `src/tryon/tryon-store.ts`.
 Pair cache: `src/tryon/still-cache.ts`.

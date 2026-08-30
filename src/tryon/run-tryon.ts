@@ -26,7 +26,9 @@ export async function beginTryOn(
   if (existing?.status === "ready" || existing?.status === "queued") {
     return { job: existing, started: false };
   }
-  const cached = await deps.stills.get(tryOnPairHash(deps.person, deps.garmentImage));
+  const cached = await deps.stills.get(
+    tryOnPairHash(deps.person, garmentId, deps.garmentImage),
+  );
   if (cached) {
     return { job: await deps.store.markReady(lookId, garmentId, cached), started: false };
   }
@@ -42,7 +44,7 @@ export async function runTryOn(
   if (existing?.status === "ready") {
     return existing;
   }
-  const pairHash = tryOnPairHash(deps.person, deps.garmentImage);
+  const pairHash = tryOnPairHash(deps.person, garmentId, deps.garmentImage);
   const cached = await deps.stills.get(pairHash);
   if (cached) {
     return await deps.store.markReady(lookId, garmentId, cached);
