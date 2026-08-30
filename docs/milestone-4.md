@@ -8,6 +8,7 @@ Still try-on: the saved look photo plus a garment product image become a cached 
 - Jobs: queued, ready, failed
 - Cache by person photo and garment id; Fal is skipped on a hit
 - Active feed item generates; swipe shows a ready still instantly
+- Until a still is ready, a saved look shows that garment’s product photo
 
 ## Out of scope
 
@@ -17,7 +18,7 @@ Still try-on: the saved look photo plus a garment product image become a cached 
 
 ## Done when
 
-A saved look on a catalog garment shows a try-on still when the job is ready, and a new CSV garment can use the same path.
+A saved look on a catalog garment shows that product’s photo until the try-on still is ready, then the still. A new CSV garment can use the same path.
 
 Requires `FAL_KEY` in `.env.local`. Missing key fails the job; it does not fake a still.
 

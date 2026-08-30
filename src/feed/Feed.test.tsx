@@ -54,6 +54,35 @@ describe("Feed", () => {
     expect(init.body).toBe(JSON.stringify({ garmentId: "atlas:ATL-COAT" }));
   });
 
+  it("shows each garment product photo until a still is ready", () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(() => new Promise(() => {})),
+    );
+    const coat = garmentFixture({ productImageUrl: "/garments/ATL-COAT-01.jpg" });
+    const blazer = garmentFixture({
+      id: "atlas:ATL-BLZ",
+      sku: "ATL-BLZ",
+      name: "Blazer",
+      productImageUrl: "/garments/ATL-BLZ-02.jpg",
+    });
+    const { container } = render(
+      <Feed
+        garments={[coat, blazer]}
+        shops={[shopFixture()]}
+        look={look}
+        tryOnJobs={[]}
+      />,
+    );
+    const srcs = [...container.querySelectorAll("section img")].map((img) =>
+      img.getAttribute("src"),
+    );
+    expect(srcs).toEqual([
+      "/garments/ATL-COAT-01.jpg",
+      "/garments/ATL-BLZ-02.jpg",
+    ]);
+  });
+
   it("does not generate without a look", async () => {
     const fetchMock = vi.fn();
     vi.stubGlobal("fetch", fetchMock);

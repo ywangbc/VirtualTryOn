@@ -11,6 +11,7 @@ Index of project documentation. Implementation details live in code; these pages
 - Catalog: `src/catalog/catalog.ts`, `src/catalog/catalog-csv.ts`, `src/catalog/load-catalog.ts`
 - Seed catalog: `src/catalog/seed/shops.csv`, `src/catalog/seed/garments.csv`
 - Mock clips: `public/clips/`
+- Seed product photos: `public/garments/`
 - Feed UI: `src/feed/Feed.tsx`
 - Feed media choice: `src/feed/feed-media.ts`
 - Look identity: `src/look/look.ts`, `src/look/look-store.ts`, `src/look/LookChrome.tsx`
