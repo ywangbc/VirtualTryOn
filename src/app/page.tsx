@@ -5,6 +5,7 @@ import { Feed } from "@/feed/Feed";
 import { LookChrome } from "@/look/LookChrome";
 import { LOOK_COOKIE, lookIdFromCookie } from "@/look/look-session";
 import { lookStore } from "@/look/server-store";
+import { tryOnStore } from "@/tryon/server";
 import { pressableClassName } from "@/ui/pressable";
 
 export default async function Home() {
@@ -12,10 +13,16 @@ export default async function Home() {
   const jar = await cookies();
   const id = lookIdFromCookie(jar.get(LOOK_COOKIE)?.value);
   const look = id ? ((await lookStore.get(id)) ?? null) : null;
+  const tryOnJobs = look ? await tryOnStore.list(look.id) : [];
 
   return (
     <>
-      <Feed garments={catalog.list()} shops={catalog.shops()} look={look} />
+      <Feed
+        garments={catalog.list()}
+        shops={catalog.shops()}
+        look={look}
+        tryOnJobs={tryOnJobs}
+      />
       <LookChrome look={look} />
       <div className="pointer-events-none fixed top-0 right-0 z-10 p-4">
         <Link

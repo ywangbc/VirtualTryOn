@@ -40,5 +40,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# uploaded looks
+# local looks, catalog overrides, try-on stills
 /data

@@ -10,6 +10,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@fal-ai/client": "^1.10.1",
     "csv-parse": "^7.0.2",
     "next": "16.3.3",
     "react": "19.2.8",

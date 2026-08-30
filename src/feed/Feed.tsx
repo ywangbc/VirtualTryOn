@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import type { Garment } from "@/domain/garment";
 import type { Look } from "@/look/look";
 import type { Shop } from "@/domain/shop";
+import type { TryOnJob } from "@/tryon/tryon";
 import {
   activateIndex,
   closeProduct,
@@ -19,11 +20,18 @@ type FeedProps = {
   garments: readonly Garment[];
   shops: readonly Shop[];
   look: Look | null;
+  tryOnJobs?: readonly TryOnJob[];
 };
 
-export function Feed({ garments, shops, look }: FeedProps) {
+export function Feed({ garments, shops, look, tryOnJobs = [] }: FeedProps) {
   const [state, setState] = useState(() => createFeedState(garments.length));
+  const [jobs, setJobs] = useState(() =>
+    Object.fromEntries(tryOnJobs.map((job) => [job.garmentId, job])),
+  );
+  const jobsRef = useRef(jobs);
+  jobsRef.current = jobs;
   const scrollerRef = useRef<HTMLDivElement>(null);
+  const lookId = look?.id;
 
   useEffect(() => {
     const root = scrollerRef.current;
@@ -57,6 +65,25 @@ export function Feed({ garments, shops, look }: FeedProps) {
     return () => observer.disconnect();
   }, [garments]);
 
+  useEffect(() => {
+    if (!lookId || state.activeIndex === null) {
+      return;
+    }
+    const garment = garments[state.activeIndex];
+    if (!garment) {
+      return;
+    }
+    const existing = jobsRef.current[garment.id];
+    if (existing?.status === "ready" || existing?.status === "failed") {
+      return;
+    }
+    const signal = { cancelled: false };
+    void syncTryOn(lookId, garment.id, signal, setJobs);
+    return () => {
+      signal.cancelled = true;
+    };
+  }, [lookId, state.activeIndex, garments]);
+
   const open = selectedGarment(garments, state);
   const openShop = open
     ? shops.find((shop) => shop.id === open.shopId)
@@ -83,9 +110,17 @@ export function Feed({ garments, shops, look }: FeedProps) {
           <FeedItem
             key={garment.id}
             garment={garment}
-            media={feedMedia(look, garment)}
+            media={feedMedia(look, garment, jobs[garment.id]?.resultUrl)}
             index={index}
             playing={state.activeIndex === index}
+            tryOn={look ? jobs[garment.id] : undefined}
+            onRetry={
+              look
+                ? () => {
+                    void syncTryOn(look.id, garment.id, { cancelled: false }, setJobs);
+                  }
+                : undefined
+            }
             onSelect={() =>
               setState((current) => toggleProduct(current, garments, garment.id))
             }
@@ -101,4 +136,47 @@ export function Feed({ garments, shops, look }: FeedProps) {
       ) : null}
     </div>
   );
+}
+
+async function syncTryOn(
+  lookId: string,
+  garmentId: string,
+  signal: { cancelled: boolean },
+  setJobs: (update: (current: Record<string, TryOnJob>) => Record<string, TryOnJob>) => void,
+): Promise<void> {
+  const post = await fetch("/api/tryon", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ garmentId }),
+  });
+  if (signal.cancelled) {
+    return;
+  }
+  if (!post.ok) {
+    const body = (await post.json()) as { error?: string };
+    setJobs((current) => ({
+      ...current,
+      [garmentId]: {
+        lookId,
+        garmentId,
+        status: "failed",
+        error: body.error ?? "Try-on failed",
+      },
+    }));
+    return;
+  }
+  let job = (await post.json()) as TryOnJob;
+  setJobs((current) => ({ ...current, [garmentId]: job }));
+  while (!signal.cancelled && job.status === "queued") {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    if (signal.cancelled) {
+      return;
+    }
+    const get = await fetch(`/api/tryon?garment=${encodeURIComponent(garmentId)}`);
+    if (!get.ok) {
+      return;
+    }
+    job = (await get.json()) as TryOnJob;
+    setJobs((current) => ({ ...current, [garmentId]: job }));
+  }
 }
