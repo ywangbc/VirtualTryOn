@@ -55,7 +55,33 @@ describe("Feed", () => {
     ]);
   });
 
-  it("shows each garment product photo until a still is ready", () => {
+  it("shows a ready try-on still", () => {
+    vi.stubGlobal("fetch", vi.fn());
+    const coat = garmentFixture();
+    const { container } = render(
+      <Feed
+        garments={[coat]}
+        shops={[shopFixture()]}
+        look={look}
+        tryOnJobs={[
+          {
+            lookId: look.id,
+            garmentId: coat.id,
+            status: "ready",
+            resultUrl: "/api/tryon/result?look=look-1&garment=atlas%3AATL-COAT",
+          },
+        ]}
+      />,
+    );
+    const srcs = [...container.querySelectorAll("section img")].map((img) =>
+      img.getAttribute("src"),
+    );
+    expect(srcs).toEqual([
+      "/api/tryon/result?look=look-1&garment=atlas%3AATL-COAT",
+    ]);
+  });
+
+  it("shows the look photo until a still is ready", () => {
     vi.stubGlobal(
       "fetch",
       vi.fn(() => new Promise(() => {})),
@@ -79,8 +105,8 @@ describe("Feed", () => {
       img.getAttribute("src"),
     );
     expect(srcs).toEqual([
-      "/garments/ATL-COAT-01.jpg",
-      "/garments/ATL-BLZ-02.jpg",
+      "/api/looks/look-1/photo",
+      "/api/looks/look-1/photo",
     ]);
   });
 

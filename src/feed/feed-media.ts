@@ -13,8 +13,11 @@ export function feedMedia(
   if (tryOnResultUrl) {
     return { kind: "image", src: tryOnResultUrl };
   }
+  if (look?.videoUrl) {
+    return { kind: "video", src: look.videoUrl, poster: look.photoUrl };
+  }
   if (look) {
-    return { kind: "image", src: garment.productImageUrl };
+    return { kind: "image", src: look.photoUrl };
   }
   return { kind: "video", src: garment.videoUrl, poster: garment.posterUrl };
 }
