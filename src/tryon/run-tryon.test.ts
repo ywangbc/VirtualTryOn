@@ -216,7 +216,7 @@ describe("beginTryOn", () => {
     });
   });
 
-  it("does not start a second generate for a queued or ready job", async () => {
+  it("resumes generate for a queued job", async () => {
     const store = createMemoryTryOnStore();
     const input = {
       store,
@@ -226,9 +226,19 @@ describe("beginTryOn", () => {
     };
     await store.markQueued("look-1", "g1");
     await expect(beginTryOn(input, "look-1", "g1")).resolves.toMatchObject({
-      started: false,
+      started: true,
       job: { status: "queued" },
     });
+  });
+
+  it("does not start generate for a ready job", async () => {
+    const store = createMemoryTryOnStore();
+    const input = {
+      store,
+      stills: createMemoryStillCache(),
+      person,
+      garmentImage: garment,
+    };
     await store.markReady("look-1", "g1", person);
     await expect(beginTryOn(input, "look-1", "g1")).resolves.toMatchObject({
       started: false,

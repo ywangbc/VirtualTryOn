@@ -1,5 +1,5 @@
 import { render, waitFor } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { garmentFixture } from "@/testing/garment-fixture";
 import { shopFixture } from "@/testing/shop-fixture";
 import { Feed } from "./Feed";
@@ -11,47 +11,48 @@ const look = {
 };
 
 describe("Feed", () => {
-  beforeEach(() => {
-    vi.stubGlobal(
-      "IntersectionObserver",
-      class {
-        observe() {}
-        disconnect() {}
-        unobserve() {}
-      },
-    );
-  });
-
   afterEach(() => {
     vi.unstubAllGlobals();
   });
 
-  it("starts a try-on for the active garment when a look is saved", async () => {
-    const fetchMock = vi.fn(async () => ({
-      ok: true,
-      json: async () => ({
-        lookId: "look-1",
-        garmentId: "atlas:ATL-COAT",
-        status: "ready",
-        resultUrl: "/api/tryon/result?look=look-1&garment=atlas%3AATL-COAT",
-      }),
-    }));
+  it("starts a try-on for the active garment and the next one", async () => {
+    const fetchMock = vi.fn(async (_url: string, init?: RequestInit) => {
+      const body = typeof init?.body === "string" ? JSON.parse(init.body as string) : {};
+      const garmentId =
+        typeof body.garmentId === "string" ? body.garmentId : "unknown";
+      return {
+        ok: true,
+        json: async () => ({
+          lookId: "look-1",
+          garmentId,
+          status: "ready",
+          resultUrl: `/api/tryon/result?look=look-1&garment=${encodeURIComponent(garmentId)}`,
+        }),
+      };
+    });
     vi.stubGlobal("fetch", fetchMock);
+    const coat = garmentFixture();
+    const blazer = garmentFixture({
+      id: "atlas:ATL-BLZ",
+      sku: "ATL-BLZ",
+      name: "Blazer",
+    });
     render(
       <Feed
-        garments={[garmentFixture()]}
+        garments={[coat, blazer]}
         shops={[shopFixture()]}
         look={look}
         tryOnJobs={[]}
       />,
     );
     await waitFor(() => {
-      expect(fetchMock).toHaveBeenCalled();
+      expect(fetchMock).toHaveBeenCalledTimes(2);
     });
-    const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
-    expect(url).toBe("/api/tryon");
-    expect(init.method).toBe("POST");
-    expect(init.body).toBe(JSON.stringify({ garmentId: "atlas:ATL-COAT" }));
+    const bodies = fetchMock.mock.calls.map(([, init]) => (init as RequestInit).body);
+    expect(bodies).toEqual([
+      JSON.stringify({ garmentId: "atlas:ATL-COAT" }),
+      JSON.stringify({ garmentId: "atlas:ATL-BLZ" }),
+    ]);
   });
 
   it("shows each garment product photo until a still is ready", () => {

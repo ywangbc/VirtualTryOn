@@ -7,7 +7,8 @@ Still try-on: the saved look photo plus a garment product image become a cached 
 - Person photo + garment `productImageUrl` → still, via Fal
 - Jobs: queued, ready, failed
 - Cache by person photo and garment id; Fal is skipped on a hit
-- Active feed item generates; swipe shows a ready still instantly
+- The on-screen card and the next card generate; a queued job is started again if generate did not finish
+- Snap scroll position picks the active card
 - Until a still is ready, a saved look shows that garment’s product photo
 
 ## Out of scope

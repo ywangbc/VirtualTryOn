@@ -2,11 +2,13 @@ import { describe, expect, it } from "vitest";
 import { garmentFixture } from "@/testing/garment-fixture";
 import {
   activateIndex,
+  activeIndexFromScroll,
   closeProduct,
   createFeedState,
   openGarment,
   selectedGarment,
   toggleProduct,
+  tryOnTargetIds,
 } from "./feed-session";
 
 const garments = [
@@ -43,6 +45,34 @@ describe("activateIndex", () => {
     expect(() => activateIndex(createFeedState(2), 2, 2)).toThrow(
       "activeIndex out of range: 2",
     );
+  });
+});
+
+describe("activeIndexFromScroll", () => {
+  it("maps snap position to the visible garment", () => {
+    expect(activeIndexFromScroll(0, 800, 24)).toBe(0);
+    expect(activeIndexFromScroll(800, 800, 24)).toBe(1);
+    expect(activeIndexFromScroll(8 * 800, 800, 24)).toBe(8);
+  });
+
+  it("clamps to the feed bounds", () => {
+    expect(activeIndexFromScroll(-10, 800, 3)).toBe(0);
+    expect(activeIndexFromScroll(10_000, 800, 3)).toBe(2);
+  });
+
+  it("returns null when the feed is empty", () => {
+    expect(activeIndexFromScroll(0, 800, 0)).toBeNull();
+  });
+});
+
+describe("tryOnTargetIds", () => {
+  it("starts the active garment and the next one", () => {
+    expect(tryOnTargetIds(garments, 0)).toEqual(["coat", "jacket"]);
+    expect(tryOnTargetIds(garments, 1)).toEqual(["jacket"]);
+  });
+
+  it("returns nothing without an active item", () => {
+    expect(tryOnTargetIds(garments, null)).toEqual([]);
   });
 });
 

@@ -23,7 +23,7 @@ export async function beginTryOn(
   garmentId: string,
 ): Promise<{ job: TryOnJob; started: boolean }> {
   const existing = await deps.store.get(lookId, garmentId);
-  if (existing?.status === "ready" || existing?.status === "queued") {
+  if (existing?.status === "ready") {
     return { job: existing, started: false };
   }
   const cached = await deps.stills.get(
@@ -31,6 +31,9 @@ export async function beginTryOn(
   );
   if (cached) {
     return { job: await deps.store.markReady(lookId, garmentId, cached), started: false };
+  }
+  if (existing?.status === "queued") {
+    return { job: existing, started: true };
   }
   return { job: await deps.store.markQueued(lookId, garmentId), started: true };
 }

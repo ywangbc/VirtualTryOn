@@ -23,6 +23,40 @@ export function activateIndex(
   return { activeIndex: index, openGarmentId: null };
 }
 
+export function activeIndexFromScroll(
+  scrollTop: number,
+  viewportHeight: number,
+  garmentCount: number,
+): number | null {
+  if (garmentCount === 0) {
+    return null;
+  }
+  if (viewportHeight <= 0) {
+    return 0;
+  }
+  return Math.min(
+    garmentCount - 1,
+    Math.max(0, Math.round(scrollTop / viewportHeight)),
+  );
+}
+
+export function tryOnTargetIds(
+  garments: readonly { id: string }[],
+  activeIndex: number | null,
+): string[] {
+  if (activeIndex === null) {
+    return [];
+  }
+  const ids: string[] = [];
+  for (const index of [activeIndex, activeIndex + 1]) {
+    const garment = garments[index];
+    if (garment) {
+      ids.push(garment.id);
+    }
+  }
+  return ids;
+}
+
 export function openGarment(
   state: FeedState,
   garments: readonly Garment[],
